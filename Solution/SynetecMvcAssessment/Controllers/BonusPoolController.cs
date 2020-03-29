@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using InterviewTestTemplatev2.Data;
 using InterviewTestTemplatev2.Models;
-
 
 namespace InterviewTestTemplatev2.Controllers
 {
     public class BonusPoolController : Controller
     {
+        private readonly IBonusPoolModelData _bonusPoolModelData;
 
-        private MvcInterviewV3Entities1 db = new MvcInterviewV3Entities1();
+        public BonusPoolController(IBonusPoolModelData bonusPoolModelData)
+        {
+            _bonusPoolModelData = bonusPoolModelData;
+        }
 
-        // GET: BonusPool
         public ActionResult Index()
         {
             BonusPoolCalculatorModel model = new BonusPoolCalculatorModel();
 
-            model.AllEmployees = db.HrEmployees.ToList<HrEmployee>();
+            model.AllEmployees = _bonusPoolModelData.HrEmployees.ToList<HrEmployee>();
             
             return View(model);
         }
@@ -35,12 +34,12 @@ namespace InterviewTestTemplatev2.Controllers
             int totalBonusPool = model.BonusPoolAmount;
 
             //load the details of the selected employee using the ID
-            HrEmployee hrEmployee = (HrEmployee)db.HrEmployees.FirstOrDefault(item => item.ID == selectedEmployeeId);
+            HrEmployee hrEmployee = (HrEmployee)_bonusPoolModelData.HrEmployees.FirstOrDefault(item => item.ID == selectedEmployeeId);
             
             int employeeSalary = hrEmployee.Salary;
 
             //get the total salary budget for the company
-            int totalSalary = (int)db.HrEmployees.Sum(item => item.Salary);
+            int totalSalary = (int)_bonusPoolModelData.HrEmployees.Sum(item => item.Salary);
 
             //calculate the bonus allocation for the employee
             decimal bonusPercentage = (decimal)employeeSalary / (decimal)totalSalary;
