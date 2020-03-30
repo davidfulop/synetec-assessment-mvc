@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 using InterviewTestTemplatev2.Controllers;
-using InterviewTestTemplatev2.Data;
+using InterviewTestTemplatev2.ControllerServices;
 using InterviewTestTemplatev2.Models;
 using NSubstitute;
 using NUnit.Framework;
@@ -12,23 +11,22 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
     public class BonusPoolControllerTests
     {
         private BonusPoolController _controller;
+        private IBonusPoolControllerService _mockControllerService;
 
         [SetUp]
         public void Before_each()
         {
-            var emps = new List<Employee> {
-                new Employee { Id = 0, FullName = "Alf Stokes", Salary = 10000 },
-                new Employee { Id = 1, FullName = "Bender Rodriguez", Salary = 1000 }
-            }.AsQueryable();
+            //NOTE: yes, I did not use an interface here - please see the readme
+            var calculatorModel = new BonusPoolCalculatorModel {
+                AllEmployees = new List<Employee> {
+                    new Employee {Id = 0, FullName = "Alf Stokes", Salary = 10000},
+                    new Employee {Id = 1, FullName = "Bender Rodriguez", Salary = 1000}
+                }};
 
-            var fakeEmployees = Substitute.For<IQueryable<Employee>>();
-            fakeEmployees.Provider.Returns(emps.Provider);
-            fakeEmployees.Expression.Returns(emps.Expression);
-            fakeEmployees.ElementType.Returns(emps.ElementType);
-            fakeEmployees.GetEnumerator().Returns(emps.GetEnumerator());
-            var fakeData = Substitute.For<IBonusPoolModelData>();
-            fakeData.Employees.Returns(fakeEmployees);
-            _controller = new BonusPoolController(fakeData);
+            _mockControllerService = Substitute.For<IBonusPoolControllerService>();
+            _mockControllerService.GenerateIndexModel().Returns(calculatorModel);
+
+            _controller = new BonusPoolController(_mockControllerService);
         }
 
         [Test]
@@ -36,7 +34,33 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
         {
             var result = _controller.Index() as ViewResult;
 
-            Assert.That(result?.Model, Is.InstanceOf<BonusPoolCalculatorModel>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Model, Is.InstanceOf<BonusPoolCalculatorModel>());
+        }
+
+        [Test]
+        public void Should_call_GenerateIndexModel_Index()
+        {
+            _controller.Index();
+
+            _mockControllerService.Received(1).GenerateIndexModel();
+        }
+
+        [Test]
+        public void Should_call_CalculateBonusForEmployee_for_Calculate()
+        {
+            _controller.Calculate(null);
+
+            _mockControllerService.Received(1).CalculateBonusForEmployee(null);
+        }
+
+        [Test]
+        public void Should_pass_down_model_to_CalculateBonusForEmployee_when_Calculate_called()
+        {
+            var fakeModel = new BonusPoolCalculatorModel();
+            _controller.Calculate(fakeModel);
+
+            _mockControllerService.Received(1).CalculateBonusForEmployee(fakeModel);
         }
     }
 }
