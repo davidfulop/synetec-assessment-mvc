@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using InterviewTestTemplatev2.Controllers;
@@ -18,37 +16,18 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
         [SetUp]
         public void Before_each()
         {
-            var emps = new List<HrEmployee>
-            {
-                new HrEmployee { ID = 0, FistName = "Alf", SecondName = "Stokes",
-                    Full_Name = "Al Stokes", JobTitle = "Fixer", Salary = 10000,
-                    DateOfBirth = new DateTime(1940, 6, 19), HrDepartmentId = 1},
-                new HrEmployee { ID = 1, FistName = "Bender", SecondName = "Rodriguez",
-                    Full_Name = "Bender Rodriguez", JobTitle = "Accountant", Salary = 1000,
-                    DateOfBirth = new DateTime(2000, 1, 1), HrDepartmentId = 2},
+            var emps = new List<Employee> {
+                new Employee { Id = 0, FullName = "Alf Stokes", Salary = 10000 },
+                new Employee { Id = 1, FullName = "Bender Rodriguez", Salary = 1000 }
             }.AsQueryable();
 
-            var depts = new List<HrDepartment>
-            {
-                new HrDepartment { ID = 0, Title = "HR", BonusPoolAllocationPerc = 10,
-                    Description = "x"},
-                new HrDepartment { ID = 1, Title = "Finance", BonusPoolAllocationPerc = 10,
-                    Description = "y" },
-            }.AsQueryable();
-
-            var fakeEmployees = Substitute.For<DbSet<HrEmployee>, IQueryable<HrEmployee>>();
-            ((IQueryable<HrEmployee>)fakeEmployees).Provider.Returns(emps.Provider);
-            ((IQueryable<HrEmployee>)fakeEmployees).Expression.Returns(emps.Expression);
-            ((IQueryable<HrEmployee>)fakeEmployees).ElementType.Returns(emps.ElementType);
-            ((IQueryable<HrEmployee>)fakeEmployees).GetEnumerator().Returns(emps.GetEnumerator());
-            var fakeDepartments = Substitute.For<DbSet<HrDepartment>, IQueryable<HrDepartment>>();
-            ((IQueryable<HrDepartment>)fakeDepartments).Provider.Returns(depts.Provider);
-            ((IQueryable<HrDepartment>)fakeDepartments).Expression.Returns(depts.Expression);
-            ((IQueryable<HrDepartment>)fakeDepartments).ElementType.Returns(depts.ElementType);
-            ((IQueryable<HrDepartment>)fakeDepartments).GetEnumerator().Returns(depts.GetEnumerator());
+            var fakeEmployees = Substitute.For<IQueryable<Employee>>();
+            fakeEmployees.Provider.Returns(emps.Provider);
+            fakeEmployees.Expression.Returns(emps.Expression);
+            fakeEmployees.ElementType.Returns(emps.ElementType);
+            fakeEmployees.GetEnumerator().Returns(emps.GetEnumerator());
             var fakeData = Substitute.For<IBonusPoolModelData>();
-            fakeData.HrEmployees.Returns(fakeEmployees);
-            fakeData.HrDepartments.Returns(fakeDepartments);
+            fakeData.Employees.Returns(fakeEmployees);
             _controller = new BonusPoolController(fakeData);
         }
 

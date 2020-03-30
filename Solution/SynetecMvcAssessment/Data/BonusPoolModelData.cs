@@ -1,32 +1,30 @@
-using System.Data.Entity;
+using System.Linq;
+using AutoMapper;
+using InterviewTestTemplatev2.Models;
 
 namespace InterviewTestTemplatev2.Data
 {
     public interface IBonusPoolModelData
     {
-        DbSet<HrDepartment> HrDepartments { get; set; }
-        DbSet<HrEmployee> HrEmployees { get; set; }
+        IQueryable<Employee> Employees { get; }
     }
 
     public class BonusPoolModelData : IBonusPoolModelData
     {
         private readonly MvcInterviewV3Entities1 _context;
+        private readonly IMapper _employeeMapper;
 
-        public BonusPoolModelData()
+        public BonusPoolModelData(IMapperFactory mapperFactory)
         {
             _context = new MvcInterviewV3Entities1();
+            _employeeMapper = mapperFactory.CreateDataToModelMapper();
         }
 
-        public DbSet<HrDepartment> HrDepartments
+        public IQueryable<Employee> Employees
         {
-            get { return _context.HrDepartments; }
-            set { _context.HrDepartments = value; }
-        }
-
-        public DbSet<HrEmployee> HrEmployees
-        {
-            get { return _context.HrEmployees; }
-            set { _context.HrEmployees = value; }
+            get { return _context.HrEmployees.ToList()
+                .Select(e => _employeeMapper.Map<Employee>(e))
+                .AsQueryable(); }
         }
     }
 }

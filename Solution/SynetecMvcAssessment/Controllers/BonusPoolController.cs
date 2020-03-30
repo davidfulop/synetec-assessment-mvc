@@ -17,9 +17,7 @@ namespace InterviewTestTemplatev2.Controllers
         public ActionResult Index()
         {
             BonusPoolCalculatorModel model = new BonusPoolCalculatorModel();
-
-            model.AllEmployees = _bonusPoolModelData.HrEmployees.ToList<HrEmployee>();
-            
+            model.AllEmployees = _bonusPoolModelData.Employees.ToList();
             return View(model);
         }
 
@@ -27,27 +25,24 @@ namespace InterviewTestTemplatev2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Calculate(BonusPoolCalculatorModel model)
         {
-
-            
-
             int selectedEmployeeId = model.SelectedEmployeeId;
             int totalBonusPool = model.BonusPoolAmount;
 
-            //load the details of the selected employee using the ID
-            HrEmployee hrEmployee = (HrEmployee)_bonusPoolModelData.HrEmployees.FirstOrDefault(item => item.ID == selectedEmployeeId);
-            
-            int employeeSalary = hrEmployee.Salary;
+            var employee = _bonusPoolModelData.Employees
+                .FirstOrDefault(item => item.Id == selectedEmployeeId);
+
+            int employeeSalary = employee.Salary;
 
             //get the total salary budget for the company
-            int totalSalary = (int)_bonusPoolModelData.HrEmployees.Sum(item => item.Salary);
+            int totalSalary = _bonusPoolModelData.Employees.Sum(item => item.Salary);
 
             //calculate the bonus allocation for the employee
             decimal bonusPercentage = (decimal)employeeSalary / (decimal)totalSalary;
             int bonusAllocation = (int)(bonusPercentage * totalBonusPool);
 
             BonusPoolCalculatorResultModel result = new BonusPoolCalculatorResultModel();
-            result.hrEmployee = hrEmployee;
-            result.bonusPoolAllocation = bonusAllocation;
+            result.Employee = employee;
+            result.BonusPoolAllocation = bonusAllocation;
             
             return View(result);
         }

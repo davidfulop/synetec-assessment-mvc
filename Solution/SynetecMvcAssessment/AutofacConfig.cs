@@ -15,6 +15,7 @@ namespace InterviewTestTemplatev2
             builder.RegisterSource(new ViewRegistrationSource());
 
             builder.RegisterType<BonusPoolModelData>().As<IBonusPoolModelData>();
+            builder.RegisterType<MapperFactory>().As<IMapperFactory>();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
