@@ -21,32 +21,41 @@ namespace InterviewTestTemplatev2.ControllerServices
 
         public BonusPoolCalculatorModel GenerateIndexModel()
         {
-            var model = new BonusPoolCalculatorModel();
-            model.AllEmployees = _bonusPoolModelData.Employees.ToList();
-            return model;
+            return new BonusPoolCalculatorModel {
+                AllEmployees = _bonusPoolModelData.Employees.ToList()
+            };
         }
 
         public BonusPoolCalculatorResultModel CalculateBonusForEmployee(BonusPoolCalculatorModel model)
         {
-            int selectedEmployeeId = model.SelectedEmployeeId;
-            int totalBonusPool = model.BonusPoolAmount;
+            var employee = SelectEmployeeById(model);
+            var bonus = CalculateBonus(employee.Salary, model.BonusPoolAmount);
+            return CreateResultModel(employee, (int)bonus);
+        }
 
-            var employee = _bonusPoolModelData.Employees
-                .FirstOrDefault(item => item.Id == selectedEmployeeId);
+        private Employee SelectEmployeeById(BonusPoolCalculatorModel model)
+        {
+            return _bonusPoolModelData.Employees.FirstOrDefault(
+                employee => employee.Id == model.SelectedEmployeeId);
+        }
 
-            int employeeSalary = employee.Salary;
+        private int CalculateTotalSalary()
+        {
+            return _bonusPoolModelData.Employees.Sum(employee => employee.Salary);
+        }
 
-            //get the total salary budget for the company
-            int totalSalary = _bonusPoolModelData.Employees.Sum(item => item.Salary);
+        private decimal CalculateBonus(int employeeSalary, int bonusPoolAmount)
+        {
+            var totalSalary = CalculateTotalSalary();
+            var bonusPercentage = (decimal) employeeSalary / totalSalary;
+            return bonusPercentage * bonusPoolAmount;
+        }
 
-            //calculate the bonus allocation for the employee
-            decimal bonusPercentage = (decimal) employeeSalary / (decimal) totalSalary;
-            int bonusAllocation = (int) (bonusPercentage * totalBonusPool);
-
-            BonusPoolCalculatorResultModel result = new BonusPoolCalculatorResultModel();
-            result.Employee = employee;
-            result.BonusPoolAllocation = bonusAllocation;
-            return result;
+        private BonusPoolCalculatorResultModel CreateResultModel(Employee employee, int bonus)
+        {
+            return new BonusPoolCalculatorResultModel {
+                Employee = employee, BonusPoolAllocation = bonus
+            };
         }
     }
 }
