@@ -8,11 +8,10 @@ using NUnit.Framework;
 
 namespace SynetecMvcAssessment.UnitTests.ControllerServices
 {
-    public class BonusPoolControllerServiceTests
+    public class BonusPoolCalculatorServiceTests
     {
-        private IBonusPoolModelData _fakeData;
         private List<Employee> _employees;
-        private BonusPoolControllerService _service;
+        private BonusPoolCalculatorService _service;
 
         [SetUp]
         public void Before_each()
@@ -21,27 +20,10 @@ namespace SynetecMvcAssessment.UnitTests.ControllerServices
                 new Employee {Id = 0, FullName = "Alf Stokes", Salary = 10000},
                 new Employee {Id = 1, FullName = "Bender Rodriguez", Salary = 1000}
             };
-            _fakeData = Substitute.For<IBonusPoolModelData>();
-            _fakeData.Employees.Returns(_employees.AsQueryable());
+            var fakeData = Substitute.For<IBonusPoolModelData>();
+            fakeData.Employees.Returns(_employees.AsQueryable());
 
-            _service = new BonusPoolControllerService(_fakeData);
-        }
-
-        [Test]
-        public void Should_return_correct_model_for_Index()
-        {
-            var model = _service.GenerateIndexModel();
-
-            Assert.That(model, Is.Not.Null);
-            Assert.That(model, Is.InstanceOf<BonusPoolCalculatorModel>());
-        }
-
-        [Test]
-        public void Should_have_all_employees_in_model()
-        {
-            var model = _service.GenerateIndexModel();
-
-            Assert.That(model.AllEmployees, Is.EquivalentTo(_employees));
+            _service = new BonusPoolCalculatorService(fakeData);
         }
 
         [Test]

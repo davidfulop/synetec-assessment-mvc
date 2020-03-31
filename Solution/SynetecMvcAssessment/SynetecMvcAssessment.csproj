@@ -193,7 +193,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="AutofacConfig.cs" />
-    <Compile Include="ControllerServices\BonusPoolControllerService.cs" />
+    <Compile Include="ControllerServices\BonusPoolCalculatorService.cs" />
+    <Compile Include="ControllerServices\BonusPoolIndexService.cs" />
     <Compile Include="Controllers\BonusPoolController.cs" />
     <Compile Include="AutomapperConfig.cs" />
     <Compile Include="Data\BonusPoolModel.Context.cs">

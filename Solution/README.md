@@ -25,9 +25,11 @@ Some of the acceptance tests can go away now, but I wanted to keep them so you c
 - I've added a wrapper above the DbContext. This was necessary to have DI, but also it's generally good not to rely on something that is controlled (to some extent) by something outside of the app. (In this case the database schema.)
 - A bit later I've realised that only one of the sets is being used in the app, so only that one needs to be exposed through the wrapper.
 - I've added the Employee class in the Model so that the class' interface is locked down from our end. If anything changes in the schema or the Data classes, that change won't affect the app.
-- Here I chose only to expose the properties that are actually needed (used) in the app. Less maintenance. Also more explicit domain model, but I'm aware that from a DDD perspective this may be a controversial choice.
-- I'm usually a fan of the Interface Segregation Principle, but in case of IBonusPoolControllerService I think it wouldn't do any good to split the interface into 2.
+- Here I chose to expose only the properties that are actually needed (used) in the app. Less maintenance. Also more explicit domain model, but I'm aware that from a DDD perspective this may be a controversial choice.
 - Not putting an interface around the two model classes was a conscious choice. They're just property bags. As long as they don't contain actual logic, I think it's pragmatic to just use the class, as in this case I'm not actually relying on any implementation.
-- I deleted comments, as I think if the code and the tests aren't self-explanatory enough, no comment will help that. I left one comment though to explain a choice that may seem controversial in an interview. (Okay, one of many choices. :) )
+- I deleted comments, as I think if the code and the tests aren't self-explanatory enough no comment will help. I left one comment though to explain a choice that may seem controversial in an interview. (Okay, one of many choices. :) )
 
 The things above are not laws that I believe till the bitter end. This is just how I think based on my experiences so far. I'm aware that I'm not finished my learning, so I'm open to discuss these.
+
+## Next Steps
+- Making use of Async Linq methods in the service class. (It would require some tinkering.)

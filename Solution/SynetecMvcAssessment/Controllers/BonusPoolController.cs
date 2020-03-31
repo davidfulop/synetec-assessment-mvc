@@ -6,16 +6,18 @@ namespace InterviewTestTemplatev2.Controllers
 {
     public class BonusPoolController : Controller
     {
-        private readonly IBonusPoolControllerService _controllerService;
+        private readonly IBonusPoolIndexService _indexService;
+        private readonly IBonusPoolCalculatorService _calculatorService;
 
-        public BonusPoolController(IBonusPoolControllerService controllerService)
+        public BonusPoolController(IBonusPoolIndexService indexService, IBonusPoolCalculatorService calculatorService)
         {
-            _controllerService = controllerService;
+            _indexService = indexService;
+            _calculatorService = calculatorService;
         }
 
         public ActionResult Index()
         {
-            var model = _controllerService.GenerateIndexModel();
+            var model = _indexService.GenerateIndexModel();
             return View(model);
         }
 
@@ -23,7 +25,7 @@ namespace InterviewTestTemplatev2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Calculate(BonusPoolCalculatorModel model)
         {
-            var resultModel = _controllerService.CalculateBonusForEmployee(model);
+            var resultModel = _calculatorService.CalculateBonusForEmployee(model);
             return View(resultModel);
         }
     }

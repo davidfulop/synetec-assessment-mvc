@@ -17,7 +17,8 @@ namespace InterviewTestTemplatev2
 
             builder.RegisterType<BonusPoolModelData>().As<IBonusPoolModelData>();
             builder.RegisterType<MapperFactory>().As<IMapperFactory>();
-            builder.RegisterType<BonusPoolControllerService>().As<IBonusPoolControllerService>();
+            builder.RegisterType<BonusPoolIndexService>().As<IBonusPoolIndexService>();
+            builder.RegisterType<BonusPoolCalculatorService>().As<IBonusPoolCalculatorService>();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

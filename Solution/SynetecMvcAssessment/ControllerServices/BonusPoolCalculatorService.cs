@@ -4,26 +4,18 @@ using InterviewTestTemplatev2.Models;
 
 namespace InterviewTestTemplatev2.ControllerServices
 {
-    public interface IBonusPoolControllerService
+    public interface IBonusPoolCalculatorService
     {
-        BonusPoolCalculatorModel GenerateIndexModel();
         BonusPoolCalculatorResultModel CalculateBonusForEmployee(BonusPoolCalculatorModel model);
     }
 
-    public class BonusPoolControllerService : IBonusPoolControllerService
+    public class BonusPoolCalculatorService : IBonusPoolCalculatorService
     {
         private readonly IBonusPoolModelData _bonusPoolModelData;
 
-        public BonusPoolControllerService(IBonusPoolModelData bonusPoolModelData)
+        public BonusPoolCalculatorService(IBonusPoolModelData bonusPoolModelData)
         {
             _bonusPoolModelData = bonusPoolModelData;
-        }
-
-        public BonusPoolCalculatorModel GenerateIndexModel()
-        {
-            return new BonusPoolCalculatorModel {
-                AllEmployees = _bonusPoolModelData.Employees.ToList()
-            };
         }
 
         public BonusPoolCalculatorResultModel CalculateBonusForEmployee(BonusPoolCalculatorModel model)

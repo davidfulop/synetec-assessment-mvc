@@ -11,7 +11,8 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
     public class BonusPoolControllerTests
     {
         private BonusPoolController _controller;
-        private IBonusPoolControllerService _mockControllerService;
+        private IBonusPoolIndexService _mockIndexService;
+        private IBonusPoolCalculatorService _mockCalculatorService;
 
         [SetUp]
         public void Before_each()
@@ -23,10 +24,11 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
                     new Employee {Id = 1, FullName = "Bender Rodriguez", Salary = 1000}
                 }};
 
-            _mockControllerService = Substitute.For<IBonusPoolControllerService>();
-            _mockControllerService.GenerateIndexModel().Returns(calculatorModel);
+            _mockIndexService = Substitute.For<IBonusPoolIndexService>();
+            _mockIndexService.GenerateIndexModel().Returns(calculatorModel);
+            _mockCalculatorService = Substitute.For<IBonusPoolCalculatorService>();
 
-            _controller = new BonusPoolController(_mockControllerService);
+            _controller = new BonusPoolController(_mockIndexService, _mockCalculatorService);
         }
 
         [Test]
@@ -43,7 +45,7 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
         {
             _controller.Index();
 
-            _mockControllerService.Received(1).GenerateIndexModel();
+            _mockIndexService.Received(1).GenerateIndexModel();
         }
 
         [Test]
@@ -51,7 +53,7 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
         {
             _controller.Calculate(null);
 
-            _mockControllerService.Received(1).CalculateBonusForEmployee(null);
+            _mockCalculatorService.Received(1).CalculateBonusForEmployee(null);
         }
 
         [Test]
@@ -60,7 +62,7 @@ namespace SynetecMvcAssessment.UnitTests.Controllers
             var fakeModel = new BonusPoolCalculatorModel();
             _controller.Calculate(fakeModel);
 
-            _mockControllerService.Received(1).CalculateBonusForEmployee(fakeModel);
+            _mockCalculatorService.Received(1).CalculateBonusForEmployee(fakeModel);
         }
     }
 }
